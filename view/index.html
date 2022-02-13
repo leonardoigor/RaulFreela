@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Envio</title>
+  <!-- css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- css -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+  <div class="inputBox">
+    <h1>Envie seus arquivos em csv</h1>
+    <form method="post" id="fileForm" enctype="multipart/form-data">
+      <div class="file-field input-field">
+        <div class="btn">
+          <span>Selecione</span>
+          <input class="fileSelect" id="file" type="file" accept=".csv" multiple />
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text" />
+          <div class="progress">
+            <div class="determinate" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="file-field input-field">
+          <div class="btn">
+            <span>Selecione</span>
+            <input class="fileSelect" id="file2" type="file" accept=".csv" />
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" />
+          </div>
+        </div> -->
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="password" type="password" />
+          <label for="password">Senha</label>
+          <span class="helper-text">Para finalizar entre com a senha</span>
+        </div>
+      </div>
+      <input id="uploadButton" disabled class="formSendBtn" type="submit" value="Enviar" />
+    </form>
+
+  </div>
+  <!-- js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="index.js"></script>
+  <!-- js -->
+</body>
+
+</html>
