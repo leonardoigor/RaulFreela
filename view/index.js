@@ -55,7 +55,7 @@ $(document).ready(function () {
                 $("#uploadButton").prop("disabled", true);
             }
         }
-        xhr.open('POST', 'http://127.0.0.1:8000/upload');
+        xhr.open('POST', 'https://studiocloud.com.br/importacao/public/upload');
         xhr.send(formData);
 
     });
