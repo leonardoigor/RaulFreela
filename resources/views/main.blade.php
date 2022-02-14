@@ -176,7 +176,7 @@
                     $("#uploadButton").prop("disabled", true);
                 }
             }
-            xhr.open('POST', 'public/upload');
+            xhr.open('POST', 'upload');
             xhr.send(formData);
 
         });
