@@ -16,7 +16,7 @@ use App\Models\BaseGoverno;
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return view('main');
 });
 
 $router->get('teste', function () {
