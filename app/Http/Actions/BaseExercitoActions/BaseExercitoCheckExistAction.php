@@ -6,9 +6,10 @@ use App\Models\BaseExercito;
 
 class BaseExercitoCheckExistAction
 {
-    public static function checkIfExistByCpf($data)
+    public static function checkIfExistByCpf($cpf)
     {
-        $baseExercito = BaseExercito::where('cpf', $data['CPF'])->first();
+
+        $baseExercito = BaseExercito::where('cpf', $cpf)->first();
         if ($baseExercito) {
             return true;
         }

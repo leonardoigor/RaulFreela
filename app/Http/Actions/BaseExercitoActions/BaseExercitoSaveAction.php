@@ -2,35 +2,71 @@
 
 namespace App\Http\Actions\BaseExercitoActions;
 
+use App\Logger;
 use App\Models\BaseExercito;
+use App\Models\BaseExercitoEmp;
 
 class BaseExercitoSaveAction
 {
+
     public static function save($data)
     {
         $data = BaseExercitoSaveAction::keys_array_lowercase($data);
         $model = new BaseExercito();
         $fillables = $model->getfillable();
-        // dd($data, $fillables);
         $newdata = array();
+        $bank_emp_list = array();
         foreach ($fillables as $key => $value) {
             $value = strtolower($value);
             if (isset($data[$value])) {
                 $newdata[$value] = $data[$value];
             }
         }
-        $data = BaseExercitoSaveAction::handle_paramenter($newdata);
+        if (!isset($data['margem_livre'])) {
+            foreach ($data as $key => $value) {
+                if (str_contains($key, '_emp')) {
+                    $splitter = explode('_', $key);
+                    if ($value != '' && $value > 0) {
+
+                        $bankname = count($splitter) > 3 ? $splitter[2] . $splitter[3] : $splitter[2];
+                        $bankname = str_replace('-', ' ', $bankname);
+                        BaseExercitoSaveAction::handle_emp($splitter[0], $value, $newdata, $bankname);
+                    }
+                }
+            }
+        }
+        $data = BaseExercitoSaveAction::handle_paramenter($newdata, $data);
         $result = BaseExercito::create($data);
+
         return $result->save();
     }
-    public static function handle_paramenter($data)
+    public static function handle_emp($cod, $value, $data, $bank_name)
+    {
+        $logger = new Logger('BaseExercitoEmpRepository_success', 'UploadController');
+
+        try {
+            $data['cod'] = $cod;
+            $data['valor'] = $value;
+            $data['banco'] = $bank_name;
+            $logger->log_msg('BaseExercitoEmp salvo ' . json_encode($value));
+
+            return  BaseExercitoEmp::create($data);
+        } catch (\Throwable $th) {
+            $logger = new Logger('BaseExercitoEmpRepository_success', 'UploadController');
+        }
+    }
+    public static function handle_paramenter($data, $dataUnmutted)
     {
         $d = $data;
         $model = new BaseExercito();
         $fillables = $model->getfillable();
         $data = array_intersect_key($data, array_flip($fillables));
         $last_id = BaseExercito::orderBy('id', 'desc')->first();
-        $data['id'] = $last_id->id + 1;
+        if (!$last_id) {
+            $data['id'] = 1;
+        } else {
+            $data['id'] = $last_id->id + 1;
+        }
         if (isset($d['rm'])) {
             $data['rm'] = intval($d['rm']);
             $data['rm'] = strval($d['rm']);
@@ -53,10 +89,16 @@ class BaseExercitoSaveAction
             $data['liquido'] = str_replace('.', '', $d['liquido']);
             $data['liquido'] = str_replace(',', '.', $data['liquido']);
             $data['liquido'] = floatval($data['liquido']);
-            // dd($data['liquido']);
         }
-        if (isset($d['prec_cp'])) {
-            $data['prec'] = $d['prec_cp'];
+        if (isset($dataUnmutted['prec_cp'])) {
+            $data['prec'] = $dataUnmutted['prec_cp'];
+        }
+        if (isset($dataUnmutted['margem_livre'])) {
+            $data['margem'] = $dataUnmutted['margem_livre'];
+
+            $data['margem'] = str_replace('.', '', $data['margem']);
+            $data['margem'] = str_replace(',', '.', $data['margem']);
+            $data['margem'] = floatval($data['margem']);
         }
         return $data;
     }

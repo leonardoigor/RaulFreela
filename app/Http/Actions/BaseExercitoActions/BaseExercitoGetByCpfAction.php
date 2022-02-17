@@ -8,6 +8,6 @@ class BaseExercitoGetByCpfAction
 {
     public static function getByCpfg($data)
     {
-        return BaseExercito::where('cpf', $data['CPF'])->first();
+        return BaseExercito::where('cpf', $data)->first();
     }
 }

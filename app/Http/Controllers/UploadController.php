@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\repository\BaseExercitoRepository;
 use App\Logger;
+use App\Models\BaseExercito;
+use App\Models\BaseExercitoEmp;
 use Illuminate\Http\Request;
 
 class UploadController extends Controller
@@ -60,10 +62,68 @@ class UploadController extends Controller
         }
     }
 
+    public function upload_margem(Request $request)
+    {
+        try {
+            $file = $request->file('file');
+            foreach ($file as $key => $value) {
+                if ($value) {
+                    $current = $this->make_margem_upload($value);
+                    if (!$current[0]) {
+                        throw new \Exception($current[1]);
+                    }
+                }
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['data' => "Erro ao realizar upload", 'errors' => [$th->getMessage()]], 400);
+        }
+    }
+    private function make_margem_upload($file)
+    {
+        $this->logger->log_msg("Starting upload -----------------------");
+        $random = rand(1, 1000);
+        $fake_name = time() . '_' . $random;
+        $ext = $file->getClientOriginalExtension();
+        if ($ext != 'csv') {
+            throw new \Exception('Arquivo não é um CSV');
+        }
+
+        $this->load_excel_margem($file);
+    }
+    private function load_excel_margem($file_name)
+    {
+
+        // $file = file_get_contents($file_name->getRealPath());
+        // $csv = explode("\n", $file);
+        // $labels = array_shift($csv);
+        // $this->logger->log_msg("Labels: " . ($file));
+        $row = 1;
+        $f = file($file_name->getRealPath());
+        $data = [];
+
+        foreach ($f as $line) {
+            $data[] = str_getcsv($line);
+        }
+
+        if (($handle = fopen($file_name->getRealPath(), "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                dd($data);
+                $num = count($data);
+                echo "<p> $num fields in line $row: <br /></p>\n";
+                $row++;
+                for ($c = 0; $c < $num; $c++) {
+                    echo $data[$c] . "<br />\n";
+                }
+            }
+            fclose($handle);
+        }
+    }
     private function make_upload($file)
     {
         $this->logger->log_msg("Starting upload -----------------------");
         try {
+            // BaseExercito::truncate();
+            // BaseExercitoEmp::truncate();
             $random = rand(1, 1000);
             $fake_name = time() . '_' . $random;
             $ext = $file->getClientOriginalExtension();
@@ -107,18 +167,24 @@ class UploadController extends Controller
             }
         }
         foreach ($items as $key => $value) {
-            $cItems = count($value);
-            $cLabels = count($labels);
-            if ($cItems == $cLabels) {
-                $paylod[$key] = array_combine($labels, $value);
+            // if ($cItems == $cLabels) {
+            //     $paylod[$key] = array_combine($labels, $value);
+            // }
+            foreach ($labels as $k => $label) {
+
+                $paylod[$key][$label] = $value[$k];
             }
+
             // $paylod[$key] = array_combine($labels, $value);
         }
+        $items = array();
+        $labels = array();
+        $lines = array();
         foreach ($paylod as $key => $value) {
-
             $this->save_record($value);
-        }
 
+            sleep(1);
+        }
         return $paylod;
     }
 
@@ -128,6 +194,7 @@ class UploadController extends Controller
         $this->logger->log_msg("Starting upload -----------------------");
 
         try {
+
             $this->baseExercitoRepository->save($record);
 
             $this->logger->log_msg("Succesfuly -----------------------  " . $record['CPF']);

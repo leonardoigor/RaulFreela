@@ -20,11 +20,11 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('teste', function () {
-    // dd('s');
     // return BaseGoverno::take(1)->first();
     return view('index');
 });
 $router->post('upload', 'UploadController@upload');
+$router->post('upload_margem', 'UploadController@upload_margem');
 $router->get('info', function () {
     return phpinfo();
 });

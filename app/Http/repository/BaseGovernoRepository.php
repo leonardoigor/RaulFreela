@@ -10,18 +10,15 @@ class BaseGovernoRepository
 {
     public function save($data)
     {
-        // dd($data);
         try {
             $exits = BaseGovernoCheckExistAction::checkIfExistByCpf($data);
             if ($exits) {
                 $baseGoverno = BaseGovernoGetByCpfAction::getByCpfg($data);
-                $baseGoverno->delete();
-                // return $baseGoverno->update($data);;
-                dd($exits);
+                // $baseGoverno->delete();
+                return $baseGoverno->update($data);;
             }
             return BaseGovernoSaveAction::save($data);
         } catch (\Exception $e) {
-            dd($e);
             return false;
         }
     }

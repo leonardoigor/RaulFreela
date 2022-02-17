@@ -150,6 +150,7 @@
             xhr.onreadystatechange = function() {
                 var pross = $('.determinate')
                 if (xhr.readyState == 4) {
+                    console.log(xhr)
                     if (xhr.status == 200) {
                         var response = JSON.parse(xhr.responseText);
                         pross.css('width', 100 + '%')

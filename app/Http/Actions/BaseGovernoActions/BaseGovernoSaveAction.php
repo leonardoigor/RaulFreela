@@ -11,7 +11,6 @@ class BaseGovernoSaveAction
         $data = array_combine(array_map('strtolower', array_keys($data)), $data);
         $model = new BaseGoverno();
         $fillables = $model->getfillable();
-        // dd($data, $fillables);
         $newdata = array();
         foreach ($fillables as $key => $value) {
             $value = strtolower($value);
@@ -22,7 +21,6 @@ class BaseGovernoSaveAction
         $data = array_intersect_key($data, array_flip($fillables));
         $last_id = BaseGoverno::orderBy('id', 'desc')->first();
         $data['id'] = $last_id->id + 1;
-        // dd($data);
         $result = BaseGoverno::create($data);
 
         return $result;
