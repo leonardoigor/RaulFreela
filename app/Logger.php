@@ -24,7 +24,7 @@ class Logger
     }
     public function log_msg($msg)
     { //the action
-        // return;
+        return;
         try {
             $this->log = fopen($this->log_file, 'a');
             $log_line = join(' : ', array(date(DATE_RFC822), $this->page_name, $this->app_id, $msg));
@@ -34,7 +34,7 @@ class Logger
     }
     function close()
     { //makes sure to close the file and write lines when the process ends.
-        // return;
+        return;
         $date = date('Y-m-d');
 
         $this->log_msg("Closing log $date-----------------------");

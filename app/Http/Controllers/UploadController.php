@@ -183,7 +183,7 @@ class UploadController extends Controller
         foreach ($paylod as $key => $value) {
             $this->save_record($value);
 
-            sleep(1);
+            // sleep(1);
         }
         return $paylod;
     }
