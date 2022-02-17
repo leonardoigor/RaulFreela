@@ -28,3 +28,10 @@ $router->post('upload_margem', 'UploadController@upload_margem');
 $router->get('info', function () {
     return phpinfo();
 });
+
+$router->get('/thread', function () {
+    $thread = new Thread(function ($message) {
+        echo $message;
+    });
+    dd($thread);
+});
